@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% import 'forms.html' as forms %}
+
+{% block title %}Admin - {{ post.title }}{% endblock %}
+
+{% block contents %}
+
+    <article>
+        <header>
+            {% if post.published|datetime %}
+                <p>Published: {{ post.published }}</p>
+                {% call forms.form("", method="POST", value="Unpublish") %}
+                {% endcall %}
+            {% else %}
+                <p>Not published yet.</p>
+                {% call forms.form("", method="POST", value="Publish") %}
+                {% endcall %}
+            {% endif %}
+        </header>
+        
+        {{ post_display|safe }}
+        
+    </article>
+    
+    <a href="/admin/{{ post.id }}/edit"><button type="button">Edit</button></a>
+
+{% endblock %}

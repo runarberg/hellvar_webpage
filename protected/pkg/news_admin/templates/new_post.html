@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% import 'forms.html' as forms %}
+
+{% block title %}Admin - New post{% endblock %}
+
+{% block contents %}
+    {% call forms.form("", method="POST", value="Post") %}
+        {{ forms.input('title', type='text', label='Title: ') }}
+        {{ forms.textarea('text_body', rows=20, cols=90) }}
+    {% endcall %}
+{% endblock %}

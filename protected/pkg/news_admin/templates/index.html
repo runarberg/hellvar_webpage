@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% import 'forms.html' as forms %}
+
+{% block title %}Admin - home{% endblock %}
+
+{% block contents %}
+    {% call forms.form("", method="POST", value="Reset Posts") %}
+    {% endcall %}
+{% endblock %}
