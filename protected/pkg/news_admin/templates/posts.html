@@ -19,7 +19,7 @@
             {% for post in posts %}
                 <tr>
                     <td>{{ forms.input('post_id', type="checkbox", value=post.id) }}</td>
-                    <td><a href="/admin/posts/{{ post.id }}">{{ post.title }}</a></td>
+                    <td><a href="/posts/{{ post.id }}">{{ post.title }}</a></td>
                     <td>{% if post.published %}{{ post.published|datetime }}{% else %}Not Published{% endif %}</td>
                     <td>{{ post.last_modified|datetime }}</td>
                 </tr>

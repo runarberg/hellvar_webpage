@@ -1,8 +1,11 @@
 # Include your project-specific ignores in this file
 # Read about how to use .gitignore: https://help.github.com/articles/ignoring-files
 
-# temp files (~)
+# all temp files (~)
 *~
 
-# python compiled files (.pyc)
+# all python compiled files (.pyc)
 *.pyc
+
+# Database files
+*.db

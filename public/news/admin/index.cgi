@@ -3,10 +3,11 @@
 import sys
 sys.path.append("/home/protected/pkg")
 
-from wsgi_app.main_handler import application
-from wsgi_app.middleware import ExceptionMiddleware
+from news_admin import application
+from wsgi_app.middleware import ExceptionMiddleware, AuthMiddleware
 
 # wrap the middlewares
+application = AuthMiddleware(application)
 application = ExceptionMiddleware(application)      #for debugging
     
 from wsgiref.handlers import CGIHandler
