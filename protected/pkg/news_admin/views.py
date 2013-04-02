@@ -1,10 +1,13 @@
 import os, sys, cgi, Cookie
+sys.path.append("/home/protected/pkg")
+sys.path.append("/home/sterna/Verkefni/Hellvar webpage/protected/pkg")
 
 from jinja2 import Environment, FileSystemLoader
 from datetime import datetime
 import markdown as md
 
-import db, models
+from wsgi_app import db
+import models
 
 URLARG = "news_admin.urlargs"
 

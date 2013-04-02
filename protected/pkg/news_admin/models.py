@@ -1,6 +1,9 @@
 from datetime import datetime
 
-import db
+import sys
+sys.path.append("/home/protected/pkg")
+sys.path.append("/home/sterna/Verkefni/Hellvar webpage/protected/pkg")
+from wsgi_app import db
 
 # TODO on publicity, REMOVE sql support from this module
 import sqlite3 as sql
