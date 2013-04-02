@@ -4,7 +4,7 @@ sys.path.append("/home/sterna/Verkefni/Hellvar webpage/protected/pkg")
 
 from jinja2 import Environment, FileSystemLoader
 from datetime import datetime
-import markdown as md
+from markdown import markdown
 
 from wsgi_app import db
 import models
@@ -19,7 +19,11 @@ def format_datetime(timestr):
     time = datetime.strptime(timestr, "%Y-%m-%d %H:%M:%S.%f")
     return time.strftime("%d. %b %Y, %H:%M")
     
+def markdown_filter(text):
+    return markdown(text)
+    
 jinja_env.filters['datetime'] = format_datetime
+jinja_env.filters['markdown'] = markdown_filter
 
 # handy helper functions
 def render(template, *args, **kwargs):
@@ -97,8 +101,6 @@ def post_detail(environ, start_response):
     post = db.fetch('id', 'text_body', 'title', 'published', id=post_id)
     
     if request_method(environ) == 'GET':
-        post_display = md.markdown(post['text_body'])
-        
         start_200(start_response)
         
     elif request_method(environ) == 'POST':
