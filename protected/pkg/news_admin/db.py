@@ -1,4 +1,4 @@
-# News/db.py
+# wsgi_app/db.py
 # ==========
 # A parent module to handle repeted database actions
 
