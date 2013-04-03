@@ -3,6 +3,7 @@
 
 # all temp files (~)
 *~
+*#*#
 
 # all python compiled files (.pyc)
 *.pyc

@@ -5,7 +5,7 @@ from news_admin import application
 from wsgi_app.middleware import ExceptionMiddleware, AuthMiddleware
 
 # wrap the middlewares
-application = AuthMiddleware(application)
+application = AuthMiddleware(application, login_page='/login')
 application = ExceptionMiddleware(application)      #for debugging
 
 if __name__ in '__main__':

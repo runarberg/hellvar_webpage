@@ -2,6 +2,8 @@ import sys, re
 from traceback import format_tb
 from Cookie import SimpleCookie
 
+from security import USERS
+
 class ExceptionMiddleware (object):
     """Returns the exception in case of 500"""
     
@@ -32,11 +34,11 @@ class ExceptionMiddleware (object):
             appiter.close()
             
 class AuthMiddleware (object):
-    login_page = '/login'
-    authorized_users = ['hellvar']
+    authorized_users = [user.username for user in USERS]
 
-    def __init__(self, app):
+    def __init__(self, app, login_page='/login'):
         self.app = app
+        self.login_page = login_page
         
     def redirect_to_login(self, environ, start_response):
         # Prevent infinate redirection

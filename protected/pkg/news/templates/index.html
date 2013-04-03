@@ -5,8 +5,10 @@
         <title>Hellvar Newspage</title>
     </head>
     <body>
-        {% for post in posts %}
-            <article>{{ post.text_body|markdown|safe }}</article>
+       {% for post in posts %}
+            <article>
+                {{ post.text_body|markdown|safe }}
+            </article>
             <hr>
         {% endfor %}
     </body>

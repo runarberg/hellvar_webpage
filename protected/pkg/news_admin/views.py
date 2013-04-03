@@ -7,6 +7,7 @@ from datetime import datetime
 from markdown import markdown
 
 from wsgi_app import db
+from wsgi_app.security import USERS
 import models
 
 URLARG = "news_admin.urlargs"
@@ -63,9 +64,21 @@ def login(environ, start_response):
     elif request_method(environ) == "POST":
         form = RequestForm(environ)
         user_id = form.getvalue('user_id')
-        start_response("301 Redirect",
-                       [("Set-Cookie", "user_id={0}; Path=/".format(user_id)),
-                        ("Location", '/')])
+        password = form.getvalue('password')
+        authorized_users = [user.username for user in USERS]
+        if user_id in authorized_users:
+            # first get the correct user object
+            user = filter(lambda x: x.username == user_id, USERS)[0]
+            if password == user.password: 
+                start_response("301 Redirect",
+                               [("Set-Cookie", "user_id={0}; Path=/".format(user_id)),
+                                ("Location", '/')])
+            else:
+                auth_error = True
+                start_200(start_response)
+        else:
+            auth_error = True
+            start_200(start_response)
     
     return render('login.html', **locals())
 
