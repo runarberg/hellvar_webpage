@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} | Hellvar newspage{% endblock %}
+
+{% block body %}
+    <article>
+        {{ post.text_body|markdown|safe }}
+    </article>    
+{% endblock %}

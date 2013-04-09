@@ -32,7 +32,20 @@ def render(template, *args, **kwargs):
     
 
 def index(environ, start_response):
-    posts = db.get('id', 'title', 'text_body', 'published')
+    posts = db.get(items=['id', 'title', 'text_body', 'published'],
+                   where_not={'published': 'None'})
     
     start_response('200 OK', [('Content-Type', 'text/html')])
     return render('index.html', **locals())
+
+def post_permalink(environ, start_response):
+    args = environ[URLARG]
+    post_id = args[0]
+    post = db.fetch(items=['title', 'text_body', 'published'],
+                    where={'id': post_id})
+
+    if post['published'] is not None:
+        start_response('200 OK', [('Content-Type', 'text/html')])
+        return render('post.html', **locals())
+    else:
+        return not_found(environ, start_response)

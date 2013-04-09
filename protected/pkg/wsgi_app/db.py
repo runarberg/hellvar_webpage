@@ -6,46 +6,44 @@ import sqlite3 as sql
 # TODO on publicity, change absolute path "/home/protected/database.db"
 database = "/home/sterna/Verkefni/Hellvar webpage/protected/database.db"
 
-def get(*args, **kwargs):
-    "select a sql row object from the database and return them all"
-    conn = sql.connect(database)
-    conn.row_factory = sql.Row
-    with conn:
-        cur = conn.cursor()
 
-        if kwargs:
-            select_query = """
-                SELECT {0} FROM News WHERE {1} = ?
-            """.format(', '.join(args), kwargs.keys()[0])
-            cur.execute(select_query, kwargs.values())
-        else:
-            select_query = """
-                SELECT {0} FROM News
-            """.format(', '.join(args))
-            cur.execute(select_query)
-
-        return list(cur.fetchall())
-        
-def fetch(*args, **kwargs):
-    "select a sql row object from the database and return the first"
+def _get(func, items, where=None, where_not=None):
+    """
+    select a sql row object from the database and return them
+    by the given function
+    """
     
     conn = sql.connect(database)
     conn.row_factory = sql.Row
     with conn:
         cur = conn.cursor()
 
-        if kwargs:
+        if where is not None:
             select_query = """
                 SELECT {0} FROM News WHERE {1} = ?
-            """.format(', '.join(args), kwargs.keys()[0])
-            cur.execute(select_query, kwargs.values())
+            """.format(', '.join(items), where.keys()[0])
+            cur.execute(select_query, where.values())
+        elif where_not is not None:
+            select_query = """
+                SELECT {0} FROM News WHERE {1} != ?
+            """.format(', '.join(items), where_not.keys()[0])
+            cur.execute(select_query, where_not.values())
         else:
             select_query = """
                 SELECT {0} FROM News
-            """.format(', '.join(args))
+            """.format(', '.join(items))
             cur.execute(select_query)
 
-        return cur.fetchone()
+        callback = getattr(cur, func)
+        return callback()
+
+def get(items, where=None, where_not=None):
+    "select a sql row object from the database and return a list of them all"
+    return list(_get('fetchall', items, where, where_not))
+        
+def fetch(items, where=None, where_not=None):
+    "select a sql row object from the database and return the first"
+    return _get('fetchone', items, where, where_not)
         
 class Transaction(object):
     

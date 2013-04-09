@@ -1,15 +1,15 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-        <title>Hellvar Newspage</title>
-    </head>
-    <body>
-       {% for post in posts %}
-            <article>
-                {{ post.text_body|markdown|safe }}
-            </article>
-            <hr>
-        {% endfor %}
-    </body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Hellvar Newspage{% endblock %}
+
+{% block body %}
+    {% for post in posts %}
+        <article>
+            <header>
+                <a href="post/{{ post.id }}"><h1>{{ post.title }}</h1></a>
+                <small>Published: {{ post.published|datetime }}</small>
+            </header>
+            {{ post.text_body|markdown|safe }}
+        </article>
+    {% endfor %}
+{% endblock %}

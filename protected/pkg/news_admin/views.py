@@ -6,7 +6,7 @@ from jinja2 import Environment, FileSystemLoader
 from datetime import datetime
 from markdown import markdown
 
-from wsgi_app import db
+from wsgi_app import db, security
 from wsgi_app.security import USERS
 import models
 
@@ -43,7 +43,6 @@ def request_method(environ):
 def RequestForm(environ):
     return cgi.FieldStorage(fp=environ['wsgi.input'], environ=environ)
 
-
 # /admin
 def index(environ, start_response):    
     if request_method(environ) == "GET":
@@ -69,9 +68,11 @@ def login(environ, start_response):
         if user_id in authorized_users:
             # first get the correct user object
             user = filter(lambda x: x.username == user_id, USERS)[0]
-            if password == user.password: 
+            if password == user.password:
+                # make user hash
+                user_hash = security.make_secure_val(user_id) 
                 start_response("301 Redirect",
-                               [("Set-Cookie", "user_id={0}; Path=/".format(user_id)),
+                               [("Set-Cookie", "user_id={0}; Path=/".format(user_hash)),
                                 ("Location", '/')])
             else:
                 auth_error = True
@@ -92,7 +93,7 @@ def logout(environ, start_response):
 # /admin/posts/
 def posts(environ, start_response):
     if request_method(environ) == "GET":
-        posts = db.get('id', 'title', 'published', 'last_modified')
+        posts = db.get(items=['id', 'title', 'published', 'last_modified'])
         start_200(start_response)
         
     elif request_method(environ) == "POST":
@@ -111,7 +112,8 @@ def posts(environ, start_response):
 def post_detail(environ, start_response):
     args = environ[URLARG]
     post_id = args[0]
-    post = db.fetch('id', 'text_body', 'title', 'published', id=post_id)
+    post = db.fetch(items=['id', 'text_body', 'title', 'published'],
+                    where={'id': post_id})
     
     if request_method(environ) == 'GET':
         start_200(start_response)
@@ -146,7 +148,8 @@ def new_post(environ, start_response):
 def edit_post(environ, start_response):
     args = environ[URLARG]
     post_id = args[0]
-    post = db.fetch('id', 'title', 'text_body', id=post_id)
+    post = db.fetch(items=['id', 'title', 'text_body'],
+                    where={'id': post_id})
     
     if request_method(environ) == "GET":
         start_200(start_response)

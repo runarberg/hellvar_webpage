@@ -2,6 +2,7 @@ import sys, re
 from traceback import format_tb
 from Cookie import SimpleCookie
 
+import security
 from security import USERS
 
 class ExceptionMiddleware (object):
@@ -39,7 +40,7 @@ class AuthMiddleware (object):
     def __init__(self, app, login_page='/login'):
         self.app = app
         self.login_page = login_page
-        
+
     def redirect_to_login(self, environ, start_response):
         # Prevent infinate redirection
         path = environ.get('PATH_INFO', '').lstrip('/')
@@ -54,16 +55,16 @@ class AuthMiddleware (object):
         cookie = SimpleCookie()
         try:
             cookie.load(environ['HTTP_COOKIE'])
-            user_id = cookie['user_id'].value
+            user_hash = cookie['user_id'].value
         except KeyError:
             # Not logged in, return to the login page
             return self.redirect_to_login(environ, start_response)
         else:
-            if user_id in self.authorized_users:
+            user_id = security.check_secure_val(user_hash)
+            if user_id and user_id in self.authorized_users:
                 # valid user, continue
                 # include user_id in the environ variable
                 environ['news.user_id'] = user_id
                 return self.app(environ, start_response)
             else:
-                # not a valid user, login again
                 return self.redirect_to_login(environ, start_response)
