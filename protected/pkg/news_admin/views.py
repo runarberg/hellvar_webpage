@@ -8,9 +8,12 @@ from markdown import markdown
 
 from wsgi_app import db, security
 from wsgi_app.security import USERS
+from news.models import News
 import models
 
 URLARG = "news_admin.urlargs"
+
+news = News()
 
 # Template support
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
@@ -49,7 +52,8 @@ def index(environ, start_response):
         start_200(start_response)
 
     elif request_method(environ) == "POST":
-        models.reset_posts()
+        news.reset()
+        news.save()
             
         redirect(start_response, '/posts')
 
@@ -72,7 +76,8 @@ def login(environ, start_response):
                 # make user hash
                 user_hash = security.make_secure_val(user_id) 
                 start_response("301 Redirect",
-                               [("Set-Cookie", "user_id={0}; Path=/".format(user_hash)),
+                               [("Set-Cookie", 
+                                 "user_id={0}; Path=/".format(user_hash)),
                                 ("Location", '/')])
             else:
                 auth_error = True
@@ -93,7 +98,7 @@ def logout(environ, start_response):
 # /admin/posts/
 def posts(environ, start_response):
     if request_method(environ) == "GET":
-        posts = db.get(items=['id', 'title', 'published', 'last_modified'])
+        posts = news.get(items=['id', 'title', 'published', 'last_modified'])
         start_200(start_response)
         
     elif request_method(environ) == "POST":
@@ -102,7 +107,8 @@ def posts(environ, start_response):
         action = form.getvalue('action')
         
         if post_id and (action == "delete"):
-            models.delete_posts(post_id)
+            news.delete(where={'id': post_id})
+            news.save()
             
         redirect(start_response, '/posts')
         
@@ -112,17 +118,22 @@ def posts(environ, start_response):
 def post_detail(environ, start_response):
     args = environ[URLARG]
     post_id = args[0]
-    post = db.fetch(items=['id', 'text_body', 'title', 'published'],
-                    where={'id': post_id})
+    post = news.fetch(items=['id', 'text_body', 'title', 'published'],
+                      where={'id': post_id})
     
     if request_method(environ) == 'GET':
         start_200(start_response)
         
     elif request_method(environ) == 'POST':
         if post['published']:
-            models.unpublish_post(post_id)
+            # Unpublish by setting 'published' to empty string
+            news.update(items={'published': ''}, where={'id': post_id})
+            news.save()
         else:
-            models.publish_post(post_id)
+            # Publish by setting the published time accordingly
+            time = datetime.now()
+            news.update(items={'published': time}, where={'id': post_id})
+            news.save()
 
         redirect(start_response, '/posts')
     
@@ -137,8 +148,12 @@ def new_post(environ, start_response):
         form = RequestForm(environ)
         title = form.getvalue('title')
         text_body = form.getvalue('text_body')
+        time = datetime.now()
         
-        models.new_post(title, text_body)
+        news.insert(items={'title': title, 
+                           'text_body': text_body,
+                           'last_modified': time})
+        news.save()
         
         redirect(start_response, '/posts')
         
@@ -148,8 +163,8 @@ def new_post(environ, start_response):
 def edit_post(environ, start_response):
     args = environ[URLARG]
     post_id = args[0]
-    post = db.fetch(items=['id', 'title', 'text_body'],
-                    where={'id': post_id})
+    post = news.fetch(items=['id', 'title', 'text_body'],
+                      where={'id': post_id})
     
     if request_method(environ) == "GET":
         start_200(start_response)
@@ -158,8 +173,13 @@ def edit_post(environ, start_response):
         form = RequestForm(environ)
         title = form.getvalue('title')
         text_body = form.getvalue('text_body')
+        time = datetime.now()
         
-        models.update_post(post_id, title, text_body)
+        news.update(items={'title': title, 
+                           'text_body': text_body,
+                           'last_modified': time},
+                    where={'id': post_id})
+        news.save()
         
         redirect(start_response, "/posts/{0}".format(post_id))
         

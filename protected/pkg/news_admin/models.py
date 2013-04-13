@@ -9,6 +9,13 @@ from wsgi_app import db
 import sqlite3 as sql
 database = "/home/sterna/Verkefni/Hellvar webpage/protected/database.db"
 
+# class News(db.Model):
+#     id = db.IntField(primary_key = True)
+#     title = db.TextField(unique = True)
+#     text_body = TextField()
+#     published = TextField()
+#     last_modified = TextField()
+
 def new_post(title, text_body, time=""):
     if not time:
         time = datetime.now()

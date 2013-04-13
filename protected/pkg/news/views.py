@@ -11,6 +11,8 @@ import models
 
 URLARG = "news.urlargs"
 
+news = models.News()
+
 # Template support
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = Environment(loader=FileSystemLoader(template_dir),
@@ -32,8 +34,8 @@ def render(template, *args, **kwargs):
     
 
 def index(environ, start_response):
-    posts = db.get(items=['id', 'title', 'text_body', 'published'],
-                   where_not={'published': 'None'})
+    posts = news.get(items=['id', 'title', 'text_body', 'published'],
+                     where_not={'published': 'None'})
     
     start_response('200 OK', [('Content-Type', 'text/html')])
     return render('index.html', **locals())
@@ -41,8 +43,8 @@ def index(environ, start_response):
 def post_permalink(environ, start_response):
     args = environ[URLARG]
     post_id = args[0]
-    post = db.fetch(items=['title', 'text_body', 'published'],
-                    where={'id': post_id})
+    post = news.fetch(items=['title', 'text_body', 'published'],
+                      where={'id': post_id})
 
     if post['published'] is not None:
         start_response('200 OK', [('Content-Type', 'text/html')])
