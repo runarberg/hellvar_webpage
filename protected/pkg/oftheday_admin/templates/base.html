@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head %}
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <title>{% block title %}{% endblock %}</title>
+        {% endblock %}
+    </head>
+    <body>
+        <header>
+            {% if environ['app.user_id'] %}
+                {{ environ['app.user_id'] }}<a href="/logout">Logout</a>
+            {% endif %}
+            <ul>
+                <a href="/">home</a>
+                <a href="/new">new</a>
+            </ul>
+        </header>
+        {% block body %}{% endblock %}
+    </body>
+</html>

@@ -14,10 +14,10 @@ class Model(object):
     def __init__(self):
         self.conn = sql.connect(database, check_same_thread=False)
         self.conn.row_factory = sql.Row
-        self.name = self.__class__.__name__
+        self.__name__ = self.__class__.__name__
 
         
-    def _get(self, func, items, where=None, where_not=None):
+    def _get(self, func, items=[], where=None, where_not=None):
         """
         select a sql row object from the database and return them
         by the given function
@@ -26,7 +26,7 @@ class Model(object):
         cur = self.conn.cursor()
             
         format_args = {'items': ', '.join(items),
-                       'table': self.name}
+                       'table': self.__name__}
             
         if where is not None:
             format_args['key'] = where.keys()[0]
@@ -71,15 +71,15 @@ class Model(object):
         cur = self.conn.cursor()
         fields = [' '.join((attr, getattr(self, attr)))
                   for attr in dir(self)
-                  if isinstance(attr, str) and not attr.startswith('__')]
-        format_args = {'name': self.name,
+                  if isinstance(getattr(self, attr), str) and not attr.startswith('__')]
+        format_args = {'name': self.__name__,
                        'field_str': ', '.join(fields)}
         
         create_query = """
             CREATE TABLE {name} ({field_str})
         """.format(**format_args)
 
-        cur.execute("DROP TABLE IF EXISTS {0}".format(self.name))
+        cur.execute("DROP TABLE IF EXISTS {0}".format(self.__name__))
         cur.execute(create_query)
 
     def insert(self, items=''):
@@ -91,7 +91,7 @@ class Model(object):
         """
         cur = self.conn.cursor()
 
-        format_args = {'table': self.name,
+        format_args = {'table': self.__name__,
                        'items': ', '.join(items.keys()),
                        'values': ', '.join([':'+key for key in items.keys()])}
         
@@ -104,7 +104,7 @@ class Model(object):
     def update(self, items=None, where=None):
         cur = self.conn.cursor()
 
-        format_args = {'table': self.name,
+        format_args = {'table': self.__name__,
                        'item_value_pairs':
                            ', '.join([key+' = :'+key for key in items.keys()]),
                        'where_key': where.keys()[0]}
@@ -124,7 +124,7 @@ class Model(object):
         delete_query = """
             DELETE FROM {table}
             WHERE {key} = :{key}
-        """.format(table=self.name, key=where.keys()[0])
+        """.format(table=self.__name__, key=where.keys()[0])
         
         cur.execute(delete_query, where)
     

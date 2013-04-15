@@ -64,7 +64,7 @@ class AuthMiddleware (object):
             if user_id and user_id in self.authorized_users:
                 # valid user, continue
                 # include user_id in the environ variable
-                environ['news.user_id'] = user_id
+                environ['app.user_id'] = user_id
                 return self.app(environ, start_response)
             else:
                 return self.redirect_to_login(environ, start_response)

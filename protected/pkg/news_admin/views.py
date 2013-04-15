@@ -6,14 +6,11 @@ from jinja2 import Environment, FileSystemLoader
 from datetime import datetime
 from markdown import markdown
 
-from wsgi_app import db, security
-from wsgi_app.security import USERS
-from news.models import News
-import models
+from wsgi_app import security
+from news import models
+news = modles.News()
 
 URLARG = "news_admin.urlargs"
-
-news = News()
 
 # Template support
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
@@ -68,21 +65,23 @@ def login(environ, start_response):
         form = RequestForm(environ)
         user_id = form.getvalue('user_id')
         password = form.getvalue('password')
-        authorized_users = [user.username for user in USERS]
+        authorized_users = [user.username for user in security.USERS]
+
+        unhandled = True
         if user_id in authorized_users:
             # first get the correct user object
-            user = filter(lambda x: x.username == user_id, USERS)[0]
+            user = filter(lambda x: x.username == user_id, security.USERS)[0]
+            
             if password == user.password:
                 # make user hash
-                user_hash = security.make_secure_val(user_id) 
+                user_hash = security.make_secure_val(user_id)
                 start_response("301 Redirect",
-                               [("Set-Cookie", 
+                               [("Set-Cookie",
                                  "user_id={0}; Path=/".format(user_hash)),
                                 ("Location", '/')])
-            else:
-                auth_error = True
-                start_200(start_response)
-        else:
+                unhandled = False
+                
+        if unhandled:
             auth_error = True
             start_200(start_response)
     

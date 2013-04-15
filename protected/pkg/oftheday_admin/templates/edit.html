@@ -1,0 +1,10 @@
+{% import 'forms.html' as forms %}
+{% extends 'base.html' %}
+
+{% block title %}Edit Of the Day{% endblock %}
+
+{% block body %}
+    {% call forms.form("", method="POST", value="Submit") %}
+        {{ forms.textarea("message", value=message.message) }}
+    {% endcall %}
+{% endblock %}

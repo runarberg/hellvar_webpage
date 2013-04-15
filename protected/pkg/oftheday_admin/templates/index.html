@@ -1,0 +1,40 @@
+{% import 'forms.html' as forms %}
+{% extends 'base.html' %}
+
+{% block title %}Hellvar | Of the Day - admin{% endblock %}
+
+{% block body %}
+    {% if messages %}
+        {% call forms.form("", method="POST", value="Submit") %}
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Id</th>
+                        <th>Message</th>
+                    </td>
+                </thead>
+                <tbody>
+                    {% for otd in messages %}
+                        <tr>
+                            <td>{{ forms.input("otd_id", type="checkbox", value=otd.id) }}</td>
+                            <td><a href="{{ otd.id }}/edit">{{ otd.id }}</a></td>
+                            <td>{{ otd.message }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if select_tomany_error %}
+                <p class="error">Please select only one to edit</p>
+            {% elif select_none_error %}
+                <p class="error">Please select at least one checkbox</p>
+            {% endif %}
+            <select name="action">
+                <option value="edit">Edit message</option>
+                <option value="delete">Delete messages</option>
+            </select>
+        {% endcall %}
+    {% else %}
+        <p>No messages, yet</p>
+    {% endif %}
+{% endblock %}
