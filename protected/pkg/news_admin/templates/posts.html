@@ -26,8 +26,16 @@
             {% endfor %}
             </tbody>
         </table>
+        {% if select_to_many_error %}
+            <p class="error">Can only perform this action on one post at a time</p>
+        {% elif select_none_error %}
+            <p class="error">You have to check at least one box for this action</p>
+        {% endif %}
         <select name="action">
+            <option value="edit">Edit post</option>
             <option value="delete">Delete posts</option>
+            <option value="publish">Publish post</option>
+            <option value="unpublish">Unpublish post</option>
         </select>
     {% endcall %}
 {% endblock %}

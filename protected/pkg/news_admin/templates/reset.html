@@ -1,0 +1,10 @@
+{% import 'forms.html' as forms %}
+{% extends 'base.html' %}
+
+{% block title %}Admin - Reset posts{% endblock %}
+
+{% block contents %}
+    <p>Are you sure you want to reset the database?</p>
+    {% call forms.form("", method="POST", value="Reset Database") %}
+    {% endcall %}
+{% endblock %}

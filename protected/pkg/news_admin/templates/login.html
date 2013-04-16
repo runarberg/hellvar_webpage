@@ -4,19 +4,13 @@
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <title>Hellvar | Admin - Login</title>
-    <style>
-        .error {
-            color: red;
-            font-size: 0.7em;
-        }
-    </style>
 </head>
 <body>
     {% call forms.form("", method="POST", value="Login") %}
         {{ forms.input("user_id", type="text", label="Username", value=user_id) }}
         {{ forms.input("password", type="password", label="password") }}
         {% if auth_error %}
-            <p class="error">Username or password incorrect</p>
+            <p>Username or password incorrect</p>
         {% endif %}
     {% endcall %}
 </body>

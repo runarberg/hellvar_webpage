@@ -4,6 +4,14 @@
 {% block title %}Admin - home{% endblock %}
 
 {% block contents %}
-    {% call forms.form("", method="POST", value="Reset Posts") %}
-    {% endcall %}
+    <h1>News posts</h1>
+    <ul>
+    {% if posts %}
+        {% for post in posts %}
+            <li><a href="posts/{{ post.id }}">{{ post.title }}</a></li>
+        {% endfor %}
+    {% else %}
+        <p>No newsposts, yet</p>
+    {% endif %}
+    </ul>
 {% endblock %}
