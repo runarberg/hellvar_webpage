@@ -1,18 +1,18 @@
 {% extends 'base.html' %}
 {% import 'forms.html' as forms %}
 
-{% block title %}Admin - News posts{% endblock %}
+{% block title %}Admin - Fréttapistlar{% endblock %}
 
 {% block contents %}
     {% if posts %}
-        {% call forms.form("", method="POST", value="Submit") %}
+        {% call forms.form("", method="POST", value="Framkvæma aðgerð") %}
             <table>
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Title</th>
-                        <th>Published</th>
-                        <th>Last modified</th>
+                        <th>Titill</th>
+                        <th>Birtur</th>
+                        <th>Seinast breyttur</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -20,25 +20,25 @@
                         <tr>
                             <td>{{ forms.input('post_id', type="checkbox", value=post.id) }}</td>
                             <td><a href="/posts/{{ post.id }}">{{ post.title }}</a></td>
-                            <td>{% if post.published %}{{ post.published|datetime }}{% else %}Not Published{% endif %}</td>
+                            <td>{% if post.published %}{{ post.published|datetime }}{% else %}Óbirtur{% endif %}</td>
                             <td>{% if post.last_modified %}{{ post.last_modified|datetime }}{% endif %}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
             {% if select_to_many_error %}
-                <p class="error">Can only perform this action on one post at a time</p>
+                <p class="error">Einungis er hægt að framkvæma þessa aðgerð á einn pistill í einu.</p>
                 {% elif select_none_error %}
-                <p class="error">You have to check at least one box for this action</p>
+                <p class="error">Þessi aðgerð krefst þess að þú hakir við a.m.k. einn pistill.</p>
             {% endif %}
             <select name="action">
-                <option value="edit">Edit post</option>
-                <option value="delete">Delete posts</option>
-                <option value="publish">Publish posts</option>
-                <option value="unpublish">Unpublish posts</option>
+                <option value="edit">Breyta pistli</option>
+                <option value="delete">Eyða pistlum</option>
+                <option value="publish">Birta pistla</option>
+                <option value="unpublish">Afbirta pistla</option>
             </select>
         {% endcall %}
     {% else %}
-        <p>No news posts, yet. <a href="new_post">Upload a new post.</a></p>
+        <p>Engir fréttpistlar tiltækir, enn sem komið er. <a href="new_post">Skrifa nýjan póst</a></p>
     {% endif %}
 {% endblock %}

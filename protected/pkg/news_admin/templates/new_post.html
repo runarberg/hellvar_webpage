@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 {% import 'forms.html' as forms %}
 
-{% block title %}Admin - New post{% endblock %}
+{% block title %}Admin - Nýr pistill{% endblock %}
 
 {% block contents %}
-    {% call forms.form("", method="POST", value="Post") %}
+    {% call forms.form("", method="POST", value="Senda inn") %}
         {% if not_unique_error %}
-            <p class='error'>Title already excists</p>
+            <p class='error'>Titill þegar til</p>
         {% endif %}
-        {{ forms.input('title', type='text', value=title or '', label='Title: ') }}
+        {{ forms.input('title', type='text', value=title or '', label='Titill') }}
         {{ forms.textarea('text_body', value=text_body or '', rows=20, cols=90) }}
     {% endcall %}
 {% endblock %}

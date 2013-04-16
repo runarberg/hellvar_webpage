@@ -98,7 +98,7 @@ def posts(environ, start_response):
                 return render('redirect.html', href='posts')     
 
             elif action == "edit":
-                if isinstance(post_id, str):
+                if isinstance(post_id, basestring):
                     redirect(start_response, "{0}/edit".format(post_id))
                 else:
                     select_to_many_error = True
@@ -156,7 +156,8 @@ def post_detail(environ, start_response):
             news.update(items={'published': time}, where={'id': post_id})
             news.save()
 
-        redirect(start_response, '/posts')
+        start_response('301 Redirect', [('Content-Type', 'text/html')])
+        return render('redirect.html', href='/posts/{0}'.format(post_id))
     
     return render('post_detail.html', **locals())
     

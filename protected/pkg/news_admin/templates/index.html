@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% import 'forms.html' as forms %}
 
-{% block title %}Admin - home{% endblock %}
+{% block title %}Admin - Forsíða{% endblock %}
 
 {% block contents %}
-    <h1>News posts</h1>
+    <h1>Fréttapistlar</h1>
     <ul>
     {% if posts %}
         {% for post in posts %}
             <li><a href="posts/{{ post.id }}">{{ post.title }}</a></li>
         {% endfor %}
     {% else %}
-        <p>No newsposts, yet</p>
+        <p>Engir tiltækir fréttapistlar, enn sem komið er</p>
     {% endif %}
     </ul>
 {% endblock %}

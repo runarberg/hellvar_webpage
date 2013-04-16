@@ -8,12 +8,12 @@
     <article>
         <header>
             {% if post.published %}
-                <p>Published: {{ post.published|datetime }}</p>
-                {% call forms.form("", method="POST", value="Unpublish") %}
+                <p>Birt: {{ post.published|datetime }}</p>
+                {% call forms.form("", method="POST", value="Afbirta") %}
                 {% endcall %}
             {% else %}
-                <p>Not published yet.</p>
-                {% call forms.form("", method="POST", value="Publish") %}
+                <p>Óbirt</p>
+                {% call forms.form("", method="POST", value="Birta") %}
                 {% endcall %}
             {% endif %}
         </header>
@@ -22,6 +22,6 @@
         
     </article>
     
-    <a href="/{{ post.id }}/edit"><button type="button">Edit</button></a>
+    <a href="/{{ post.id }}/edit"><button type="button">Breyta</button></a>
 
 {% endblock %}

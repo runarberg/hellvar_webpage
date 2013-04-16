@@ -3,24 +3,20 @@
     <head>
         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
         <title>Hellvar | {% block title %}{% endblock %}</title>
-        <style>
-            input[type="submit"] {
-                display: block;
-            }
-        </style>
+        <link rel="stylesheet" href="/css/main.css" type="text/css" />
     </head>
     <body>
         <header>
             <div class="user">
                 {% if environ['app.user_id'] %}
-                    {{ environ['app.user_id'] }} <a href="/logout">logout</a>
+                    {{ environ['app.user_id'] }} <a href="/logout">Skrá út</a>
                 {% endif %}
             </div>
             <nav>
                 <ul>
-                    <li><a href="/">Admin - Home</a></li>
-                    <li><a href="/posts">Manage posts</a></li>
-                    <li><a href="/new_post">New Post</a></li>
+                    <li><a href="/">Forsíða admins</a></li>
+                    <li><a href="/posts">Pistlar</a></li>
+                    <li><a href="/new_post">Nýr pistill</a></li>
                 </ul>
             </nav>
         </header>
