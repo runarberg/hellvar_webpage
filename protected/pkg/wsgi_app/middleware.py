@@ -47,7 +47,7 @@ class AuthMiddleware (object):
         if path == self.login_page.lstrip('/'):
             return self.app(environ, start_response)
         else:
-            start_response('301 REDIRECT',
+            start_response('301 Redirect',
                            [('Location', self.login_page)])
             return ['']
         

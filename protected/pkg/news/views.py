@@ -1,4 +1,6 @@
-import os, sys, cgi
+import os
+import sys
+import cgi
 sys.path.append("/home/protected/pkg")
 sys.path.append("/home/sterna/Verkefni/Hellvar webpage/protected/pkg")
 
@@ -9,9 +11,8 @@ from markdown import markdown
 from wsgi_app import db
 import models
 
-URLARG = "news.urlargs"
-
 news = models.News()
+URLARG = "news.urlargs"
 
 # Template support
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
@@ -30,7 +31,7 @@ jinja_env.filters['markdown'] = markdown_filter
 # handy helper functions
 def render(template, *args, **kwargs):
     template = jinja_env.get_template(template)
-    return [str(template.render(*args, **kwargs)), ]
+    return [template.render(*args, **kwargs).encode('utf-8'), ]
     
 
 def index(environ, start_response):

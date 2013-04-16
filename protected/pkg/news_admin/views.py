@@ -1,7 +1,9 @@
 import os
 import sys
 import cgi
+import re
 from datetime import datetime
+from sqlite3 import IntegrityError
 sys.path.append("/home/protected/pkg")
 sys.path.append("/home/sterna/Verkefni/Hellvar webpage/protected/pkg")
 
@@ -34,7 +36,7 @@ jinja_env.filters['markdown'] = markdown_filter
 
 def render(template, *args, **kwargs):
     template = jinja_env.get_template(template)
-    return [str(template.render(*args, **kwargs)), ]
+    return [template.render(*args, **kwargs).encode('utf-8'), ]
 
 def start_200(start_response):
     return start_response("200 OK", [("Content-Type", "text/html")])
@@ -47,6 +49,17 @@ def request_method(environ):
     
 def RequestForm(environ):
     return cgi.FieldStorage(fp=environ['wsgi.input'], environ=environ)
+
+def get_unicode_value(self, field):
+    value = self.getvalue(field)
+    try:
+        unicode_value = value.decode('utf-8')
+    except AttributeError:
+        return value
+    else:
+        return unicode_value
+
+setattr(cgi.FieldStorage, 'get_unicode_value', get_unicode_value)
 
 def get_urlargs(environ, urlarg):
     return environ[urlarg]
@@ -69,8 +82,8 @@ def posts(environ, start_response):
         
     elif request_method(environ) == "POST":
         form = RequestForm(environ)
-        post_id = form.getvalue('post_id')
-        action = form.getvalue('action')
+        post_id = form.get_unicode_value('post_id')
+        action = form.get_unicode_value('action')
         
         if post_id:
             if action == "delete":
@@ -122,7 +135,7 @@ def posts(environ, start_response):
             
     return render('posts.html', **locals())
     
-# /admin/post/'post_id'/
+# /admin/posts/'post_id'/
 def post_detail(environ, start_response):
     args = environ[URLARG]
     post_id = args[0]
@@ -154,16 +167,21 @@ def new_post(environ, start_response):
         
     elif request_method(environ) == "POST":
         form = RequestForm(environ)
-        title = form.getvalue('title')
-        text_body = form.getvalue('text_body')
+        title = form.get_unicode_value('title')
+        text_body = form.get_unicode_value('text_body')
         time = datetime.now()
-        
-        news.insert(items={'title': title, 
-                           'text_body': text_body,
-                           'last_modified': time})
-        news.save()
-        
-        redirect(start_response, '/posts')
+
+        try:
+            news.insert(items={'title': title, 
+                               'text_body': text_body,
+                               'last_modified': time})
+        except IntegrityError:
+            not_unique_error = True
+            start_200(start_response)
+        else:
+            news.save()
+            post_id = news.fetch(items=['id'], where={'title': title})['id']
+            redirect(start_response, '/posts/{0}'.format(post_id))
         
     return render('new_post.html', **locals())
     
@@ -179,17 +197,21 @@ def edit_post(environ, start_response):
         
     elif request_method(environ) == "POST":
         form = RequestForm(environ)
-        title = form.getvalue('title')
-        text_body = form.getvalue('text_body')
+        title = form.get_unicode_value('title')
+        text_body = form.get_unicode_value('text_body')
         time = datetime.now()
-        
-        news.update(items={'title': title, 
-                           'text_body': text_body,
-                           'last_modified': time},
-                    where={'id': post_id})
-        news.save()
-        
-        redirect(start_response, "/posts/{0}".format(post_id))
+
+        try:
+            news.update(items={'title': title, 
+                               'text_body': text_body,
+                               'last_modified': time},
+                               where={'id': post_id})
+        except IntegrityError:
+            not_unique_error = True
+            start_200(start_response)
+        else:
+            news.save()
+            redirect(start_response, "/posts/{0}".format(post_id))
         
     return render('edit_post.html', **locals())
 
@@ -213,8 +235,8 @@ def login(environ, start_response):
 
     elif request_method(environ) == "POST":
         form = RequestForm(environ)
-        user_id = form.getvalue('user_id')
-        password = form.getvalue('password')
+        user_id = form.get_unicode_value('user_id')
+        password = form.get_unicode_value('password')
         authorized_users = [user.username for user in security.USERS]
 
         unhandled = True
@@ -224,7 +246,7 @@ def login(environ, start_response):
             
             if password == user.password:
                 # make user hash
-                user_hash = security.make_secure_val(user_id)
+                user_hash = security.make_secure_val(user_id.encode('utf-8'))
                 start_response("301 Redirect",
                                [("Set-Cookie",
                                  "user_id={0}; Path=/".format(user_hash)),

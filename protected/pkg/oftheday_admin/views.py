@@ -26,13 +26,24 @@ def redirect(start_response, href):
 
 def render(template, *args, **kwargs):
     template = jinja_env.get_template(template)
-    return [str(template.render(*args, **kwargs)), ]
+    return [template.render(*args, **kwargs).encode('utf-8'), ]
 
 def request_method(environ):
     return environ['REQUEST_METHOD']
 
 def RequestForm(environ):
     return cgi.FieldStorage(fp=environ['wsgi.input'], environ=environ)
+
+def get_unicode_value(self, field):
+    value = self.getvalue(field)
+    try:
+        unicode_value = value.decode('utf-8')
+    except AttributeError:
+        return value
+    else:
+        return unicode_value
+
+setattr(cgi.FieldStorage, 'get_unicode_value', get_unicode_value)
 
 def get_urlargs(environ):
     return environ[URLARG]    
@@ -45,8 +56,8 @@ def index(environ, start_response):
         start_200(start_response)
     elif request_method(environ) == 'POST':
         form = RequestForm(environ)
-        otd_id = form.getvalue('otd_id')
-        action = form.getvalue('action')
+        otd_id = form.get_unicode_value('otd_id')
+        action = form.get_unicode_value('action')
         if otd_id:
             if action == "delete":
                 if isinstance(otd_id, list):
@@ -88,7 +99,7 @@ def new_input(environ, start_response):
 
     elif request_method(environ) == 'POST':
         form = RequestForm(environ)
-        message = form.getvalue('message')
+        message = form.get_unicode_value('message')
         
         oftheday.insert(items={'message': message})
         oftheday.save()
@@ -106,7 +117,7 @@ def edit(environ, start_response):
 
     elif request_method(environ) == 'POST':
         form = RequestForm(environ)
-        message = form.getvalue('message')
+        message = form.get_unicode_value('message')
 
         oftheday.update(items={'message': message},
                         where={'id': otd_id})
@@ -122,15 +133,15 @@ def login(environ, start_response):
         
     elif request_method(environ) == 'POST':
         form = RequestForm(environ)
-        user_id = form.getvalue('user_id')
-        password = form.getvalue('password')
+        user_id = form.get_unicode_value('user_id')
+        password = form.get_unicode_value('password')
         authorized_users = [user.username for user in security.USERS]
 
         unhandled = True
         if user_id in authorized_users:
             user = filter(lambda x: x.username == user_id, security.USERS)[0]
             if password == user.password:
-                user_hash = security.make_secure_val(user_id)
+                user_hash = security.make_secure_val(user_id.encode('utf-8'))
                 start_response("301 Redirect",
                                [("Set-Cookie",
                                  "user_id={0}; path=/".format(user_hash)),

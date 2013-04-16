@@ -5,7 +5,10 @@
 
 {% block contents %}
     {% call forms.form("", method="POST", value="Update post") %}
-        {{ forms.input('title', type='text', value=post.title, label='Title: ') }}
-        {{ forms.textarea('text_body', value=post.text_body, rows=20, cols=90) }}
+        {% if not_unique_error %}
+            <p class='error'>Title already excists</p>
+        {% endif %}
+        {{ forms.input('title', type='text', value=title or post.title, label='Title: ') }}
+        {{ forms.textarea('text_body', value=text_body or post.text_body, rows=20, cols=90) }}
     {% endcall %}
 {% endblock %}

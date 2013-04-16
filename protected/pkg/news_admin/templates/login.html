@@ -7,11 +7,11 @@
 </head>
 <body>
     {% call forms.form("", method="POST", value="Login") %}
+        {% if auth_error %}
+            <p class="error">Username or password incorrect</p>
+        {% endif %}
         {{ forms.input("user_id", type="text", label="Username", value=user_id) }}
         {{ forms.input("password", type="password", label="password") }}
-        {% if auth_error %}
-            <p>Username or password incorrect</p>
-        {% endif %}
     {% endcall %}
 </body>
 </html>
