@@ -10,3 +10,6 @@
 
 # Database files
 *.db
+
+# Security functions
+protected/pkg/wsgi_app/security.py
