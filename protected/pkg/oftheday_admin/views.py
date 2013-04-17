@@ -1,4 +1,6 @@
-import os, sys, cgi
+import os
+import sys
+import cgi
 sys.path.append("/home/protected/pkg")
 sys.path.append("/home/sterna/Verkefni/Hellvar webpage/protected/pkg")
 
@@ -7,8 +9,8 @@ from jinja2 import Environment, FileSystemLoader
 from wsgi_app import security
 from oftheday import models
 
-URLARG = 'oftheday_admin.urlarg'
 oftheday = models.OfTheDay()
+URLARG = 'oftheday_admin.urlarg'
 
 # Template support
 
@@ -68,7 +70,7 @@ def index(environ, start_response):
                 oftheday.save()
 
                 start_response('301 Redirect', [('Content-Type', 'text/html')])
-                return render('redirect_home.html')
+                return render('redirect.html', href="/")
             elif action == "edit":
                 if not isinstance(otd_id, list):
                     redirect(start_response, "{0}/edit".format(otd_id))
@@ -155,4 +157,4 @@ def login(environ, start_response):
 
 def logout(environ, start_response):
     start_response('301 Redirect', [("Set-Cookie", "user_id=; path=/")])
-    return render('logout.html')
+    return render('redirect.html', href="/")

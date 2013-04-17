@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html>
     <head>
-        {% block head %}
-            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-            <title>{% block title %}{% endblock %}</title>
-        {% endblock %}
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Hellvar | ... dagsins Admin - {% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="/css/main.css" type="text/css" />
     </head>
     <body>
+        {% block body %}
         <header>
-            {% if environ['app.user_id'] %}
-                {{ environ['app.user_id'] }}<a href="/logout">Logout</a>
-            {% endif %}
-            <ul>
-                <a href="/">home</a>
-                <a href="/new">new</a>
-            </ul>
+            <div class="user">
+                {% if environ['app.user_id'] %}
+                    {{ environ['app.user_id'] }} <a href="/logout">Skrá út</a>
+                {% endif %}
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Forsíða admins</a></li>
+                    <li><a href="/new">Skrifa nýtt</a></li>
+                </ul>                
+            </nav>
         </header>
-        {% block body %}{% endblock %}
+        <hr />
+        {% block contents %}{% endblock %}
+        {% endblock %}
     </body>
 </html>

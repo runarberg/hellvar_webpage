@@ -1,10 +1,11 @@
 {% import 'forms.html' as forms %}
 {% extends 'base.html' %}
 
-{% block title %}Reset the database{% endblock %}
+{% block title %}Endurræsa gagnagrunninn{% endblock %}
 
 {% block body %}
-    <p>Are you sure you want to reset the database?</p>
-    {% call forms.form("", method="POST", value="Reset") %}
+    <p>Þetta mun eyða öllum innleggjum úr gagnagrunni!</p>
+    {% call forms.form("", method="POST", value="Endurræsa") %}
     {% endcall %}
+    <a href="/"><button>Hætta við</button></a>
 {% endblock %}

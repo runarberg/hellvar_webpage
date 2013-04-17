@@ -1,10 +1,10 @@
 {% import 'forms.html' as forms %}
 {% extends 'base.html' %}
 
-{% block title %}Hellvar | Of the Day - New Input{% endblock %}
+{% block title %}Nýtt innlegg{% endblock %}
 
-{% block body %}
-    {% call forms.form("", method="POST", value="Submit") %}
+{% block contents %}
+    {% call forms.form("", method="POST", value="Nýtt innlegg") %}
         {{ forms.textarea('message') }}
     {% endcall %}
 {% endblock %}

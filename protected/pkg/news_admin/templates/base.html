@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-        <title>Hellvar | {% block title %}{% endblock %}</title>
+        <title>Hellvar | Admin fréttasíðu - {% block title %}{% endblock %}</title>
         <link rel="stylesheet" href="/css/main.css" type="text/css" />
     </head>
     <body>
@@ -20,10 +20,7 @@
                 </ul>
             </nav>
         </header>
-        
-        <hr>
-        
-        {% block contents %}
-        {% endblock %}
+        <hr />
+        {% block contents %}{% endblock %}
     </body>
 </html>
