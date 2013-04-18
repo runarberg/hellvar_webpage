@@ -44,12 +44,13 @@ class AuthMiddleware (object):
     def redirect_to_login(self, environ, start_response):
         # Prevent infinate redirection
         path = environ.get('PATH_INFO', '').lstrip('/')
-        if path == self.login_page.lstrip('/'):
+        if path in self.login_page:
             return self.app(environ, start_response)
         else:
             start_response('301 Redirect',
-                           [('Location', self.login_page)])
-            return ['']
+                           [('Content-Type', 'text-plain'),
+                            ('Location', self.login_page)])
+            return ['redirect',]
         
     def __call__(self, environ, start_response):
         cookie = SimpleCookie()

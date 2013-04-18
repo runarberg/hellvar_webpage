@@ -15,6 +15,7 @@ news = models.News()
 URLARG = "news.urlargs"
 
 # Template support
+
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = Environment(loader=FileSystemLoader(template_dir),
                         autoescape=True)
@@ -29,6 +30,7 @@ jinja_env.filters['datetime'] = format_datetime
 jinja_env.filters['markdown'] = markdown_filter
 
 # handy helper functions
+
 def render(template, *args, **kwargs):
     template = jinja_env.get_template(template)
     return [template.render(*args, **kwargs).encode('utf-8'), ]
@@ -47,8 +49,15 @@ def post_permalink(environ, start_response):
     post = news.fetch(items=['title', 'text_body', 'published'],
                       where={'id': post_id})
 
-    if post['published'] is not None:
-        start_response('200 OK', [('Content-Type', 'text/html')])
-        return render('post.html', **locals())
-    else:
+    unhandled = False
+    if post:
+        if post['published'] is not None:
+            unhandled = True
+            start_response('200 OK', [('Content-Type', 'text/html')])
+            return render('post.html', **locals())
+    if unhandled:
         return not_found(environ, start_response)
+
+def not_found(environ, start_response):
+    start_response("404 NOT FOUND", [("Content-Type", "text/plain")])
+    return ["{0} Not found".format(environ.get('PATH_INFO', '').lstrip('/')), ]

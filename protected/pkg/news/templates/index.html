@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}Hellvar Newspage{% endblock %}
+{% block title %}Hellvar | Fréttasíða{% endblock %}
 
 {% block body %}
     {% if posts %}
         {% for post in posts %}
             <article>
                 <header>
-                    <a href="post/{{ post.id }}"><h1>{{ post.title }}</h1></a>
-                    <small>Published: {{ post.published|datetime }}</small>
+                    <a href="/news/post/{{ post.id }}"><h1>{{ post.title }}</h1></a>
+                    <small>Birt: {{ post.published|datetime }}</small>
                 </header>
                 {{ post.text_body|markdown|safe }}
             </article>
         {% endfor %}
     {% else %}
-        <p>No news posts been uploaded</p>
+        <p>Engar fréttir af Hellvar, enn sem komið er.</p>
     {% endif %}
 {% endblock %}

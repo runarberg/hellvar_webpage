@@ -19,7 +19,7 @@
                     {% for post in posts %}
                         <tr>
                             <td>{{ forms.input('post_id', type="checkbox", value=post.id) }}</td>
-                            <td><a href="/posts/{{ post.id }}">{{ post.title }}</a></td>
+                            <td><a href="/news/admin/posts/{{ post.id }}">{{ post.title }}</a></td>
                             <td>{% if post.published %}{{ post.published|datetime }}{% else %}Óbirtur{% endif %}</td>
                             <td>{% if post.last_modified %}{{ post.last_modified|datetime }}{% endif %}</td>
                         </tr>
@@ -39,6 +39,6 @@
             </select>
         {% endcall %}
     {% else %}
-        <p>Engir fréttpistlar tiltækir, enn sem komið er. <a href="new_post">Skrifa nýjan póst</a></p>
+        <p>Engir fréttpistlar tiltækir, enn sem komið er. <a href="/news/admin/new_post">Skrifa nýjan póst</a></p>
     {% endif %}
 {% endblock %}

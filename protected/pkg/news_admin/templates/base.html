@@ -9,14 +9,14 @@
         <header>
             <div class="user">
                 {% if environ['app.user_id'] %}
-                    {{ environ['app.user_id'] }} <a href="/logout">Skrá út</a>
+                    {{ environ['app.user_id'] }} <a href="/news/admin/logout">Skrá út</a>
                 {% endif %}
             </div>
             <nav>
                 <ul>
-                    <li><a href="/">Forsíða admins</a></li>
-                    <li><a href="/posts">Pistlar</a></li>
-                    <li><a href="/new_post">Nýr pistill</a></li>
+                    <li><a href="/news/admin/">Forsíða admins</a></li>
+                    <li><a href="/news/admin/posts">Pistlar</a></li>
+                    <li><a href="/news/admin/new_post">Nýr pistill</a></li>
                 </ul>
             </nav>
         </header>

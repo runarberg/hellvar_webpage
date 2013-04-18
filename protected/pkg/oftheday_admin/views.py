@@ -54,8 +54,10 @@ def get_urlargs(environ):
 
 def index(environ, start_response):
     messages = oftheday.get(items=['id', 'message'])
+
     if request_method(environ) == 'GET':
         start_200(start_response)
+
     elif request_method(environ) == 'POST':
         form = RequestForm(environ)
         otd_id = form.get_unicode_value('otd_id')
@@ -70,10 +72,11 @@ def index(environ, start_response):
                 oftheday.save()
 
                 start_response('301 Redirect', [('Content-Type', 'text/html')])
-                return render('redirect.html', href="/")
+                return render('redirect.html', href="/oftheday/admin/")
             elif action == "edit":
                 if not isinstance(otd_id, list):
-                    redirect(start_response, "{0}/edit".format(otd_id))
+                    redirect(start_response,
+                             "/oftheday/admin/{0}/edit".format(otd_id))
                 else:
                     select_tomany_error = True
                     start_200(start_response)
@@ -91,7 +94,7 @@ def reset_db(environ, start_response):
         oftheday.reset()
         oftheday.save()
 
-        redirect(start_response, '/')
+        redirect(start_response, '/oftheday/admin/')
         
     return render('reset.html', **locals())
 
@@ -106,7 +109,7 @@ def new_input(environ, start_response):
         oftheday.insert(items={'message': message})
         oftheday.save()
 
-        redirect(start_response, '/')
+        redirect(start_response, '/oftheday/admin/')
         
     return render('new.html', **locals())
 
@@ -125,7 +128,7 @@ def edit(environ, start_response):
                         where={'id': otd_id})
         oftheday.save()
 
-        redirect(start_response, "/")
+        redirect(start_response, "/oftheday/admin/")
 
     return render('edit.html', **locals())
 
@@ -147,7 +150,7 @@ def login(environ, start_response):
                 start_response("301 Redirect",
                                [("Set-Cookie",
                                  "user_id={0}; path=/".format(user_hash)),
-                                ("Location", "/")])
+                                ("Location", "/oftheday/admin/")])
                 unhandled = False
         if unhandled:
             auth_error = True
@@ -157,4 +160,4 @@ def login(environ, start_response):
 
 def logout(environ, start_response):
     start_response('301 Redirect', [("Set-Cookie", "user_id=; path=/")])
-    return render('redirect.html', href="/")
+    return render('redirect.html', href="/oftheday/admin/")

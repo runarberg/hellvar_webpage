@@ -3,7 +3,7 @@ import views, urls
 
 def not_found(environ, start_response):
     start_response("404 NOT FOUND", [("Content-Type", "text/plain")])
-    return ["Not found", ]
+    return ["{0} Not found".format(environ.get('PATH_INFO', '').lstrip('/')), ]
 
 def application(environ, start_response):
     path = environ.get('PATH_INFO', '').lstrip('/')

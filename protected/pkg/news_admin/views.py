@@ -95,11 +95,12 @@ def posts(environ, start_response):
 
                 news.save()
                 start_response('301 Redirect', [('Content-Type', 'text/html')])
-                return render('redirect.html', href='posts')     
+                return render('redirect.html', href='/news/admin/posts')     
 
             elif action == "edit":
                 if isinstance(post_id, basestring):
-                    redirect(start_response, "{0}/edit".format(post_id))
+                    redirect(start_response,
+                             "/news/admin/{0}/edit".format(post_id))
                 else:
                     select_to_many_error = True
                     start_200(start_response)
@@ -114,8 +115,9 @@ def posts(environ, start_response):
                     news.update(items={'published': time},
                                 where={'id': post_id})
                 news.save()
+                
                 start_response('301 Redirect', [('Content-Type', 'text/html')])
-                return render('redirect.html', href='posts')
+                return render('redirect.html', href='/news/admin/posts')
 
             elif action == "unpublish":
                 if isinstance(post_id, list):
@@ -127,8 +129,7 @@ def posts(environ, start_response):
                                 where={'id': post_id})
                 news.save()
                 start_response('301 Redirect', [('Content-Type', 'text/html')])
-                return render('redirect.html', href='posts')     
-
+                return render('redirect.html', href='/news/admin/posts')
         else:
             select_none_error = True
             start_200(start_response)
@@ -157,7 +158,8 @@ def post_detail(environ, start_response):
             news.save()
 
         start_response('301 Redirect', [('Content-Type', 'text/html')])
-        return render('redirect.html', href='/posts/{0}'.format(post_id))
+        return render('redirect.html',
+                      href='/news/admin/posts/{0}'.format(post_id))
     
     return render('post_detail.html', **locals())
     
@@ -182,7 +184,8 @@ def new_post(environ, start_response):
         else:
             news.save()
             post_id = news.fetch(items=['id'], where={'title': title})['id']
-            redirect(start_response, '/posts/{0}'.format(post_id))
+            redirect(start_response,
+                     '/news/admin/posts/{0}'.format(post_id))
         
     return render('new_post.html', **locals())
     
@@ -212,7 +215,7 @@ def edit_post(environ, start_response):
             start_200(start_response)
         else:
             news.save()
-            redirect(start_response, "/posts/{0}".format(post_id))
+            redirect(start_response, "/news/admin/posts/{0}".format(post_id))
         
     return render('edit_post.html', **locals())
 
@@ -225,7 +228,7 @@ def reset_db(environ, start_response):
         news.reset()
         news.save()
             
-        redirect(start_response, '/')
+        redirect(start_response, '/news/admin/')
 
     return render('reset.html', **locals())
     
@@ -251,7 +254,7 @@ def login(environ, start_response):
                 start_response("301 Redirect",
                                [("Set-Cookie",
                                  "user_id={0}; Path=/".format(user_hash)),
-                                ("Location", '/')])
+                                ("Location", '/news/admin/')])
                 unhandled = False
                 
         if unhandled:
@@ -265,5 +268,4 @@ def logout(environ, start_response):
     start_response("301 Redirect",
                    [("Set-Cookie", "user_id=; Path=/"),
                     ("Content-Type", 'text/html')])
-    return render('redirect.html', href="/")
-
+    return render('redirect.html', href="/news/admin/")

@@ -19,7 +19,7 @@
                     {% for otd in messages %}
                         <tr>
                             <td>{{ forms.input("otd_id", type="checkbox", value=otd.id) }}</td>
-                            <td><a href="/{{ otd.id }}/edit">{{ otd.id }}</a></td>
+                            <td><a href="/oftheday/admin/{{ otd.id }}/edit">{{ otd.id }}</a></td>
                             <td>{{ otd.message }}</td>
                         </tr>
                     {% endfor %}

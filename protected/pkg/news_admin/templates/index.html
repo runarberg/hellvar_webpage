@@ -8,7 +8,7 @@
     <ul>
     {% if posts %}
         {% for post in posts %}
-            <li><a href="posts/{{ post.id }}">{{ post.title }}</a></li>
+            <li><a href="/news/admin/posts/{{ post.id }}">{{ post.title }}</a></li>
         {% endfor %}
     {% else %}
         <p>Engir tiltækir fréttapistlar, enn sem komið er</p>
